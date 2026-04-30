@@ -4,8 +4,12 @@ import Navbar from './app/components/ui/Navbar';
 import HomePage from './pages/HomePage';
 import TemplatesPage from './pages/TemplatesPage';
 import DesignPage from './pages/DesignPage';
+import PreviewPage from './pages/PreviewPage';
 import FavoritesPage from './pages/FavoritesPage';
 import CartPage from './pages/CartPage';
+import CheckoutPage from './pages/CheckoutPage';
+import OrderConfirmationPage from './pages/OrderConfirmationPage';
+import OrdersPage from './pages/OrdersPage';
 
 export default function App() {
   return (
@@ -19,8 +23,12 @@ export default function App() {
               <Route path="/templates" element={<TemplatesPage />} />
               <Route path="/design" element={<DesignPage />} />
               <Route path="/ai-create" element={<DesignPage />} />
+              <Route path="/preview/:id" element={<PreviewPage />} />
               <Route path="/favorites" element={<FavoritesPage />} />
               <Route path="/cart" element={<CartPage />} />
+              <Route path="/checkout" element={<CheckoutPage />} />
+              <Route path="/orders" element={<OrdersPage />} />
+              <Route path="/order/:id" element={<OrderConfirmationPage />} />
             </Routes>
           </main>
           <Footer />

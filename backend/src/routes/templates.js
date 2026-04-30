@@ -10,6 +10,9 @@ router.get('/', async (req, res) => {
     if (req.query.category && req.query.category !== 'All') {
       filter.category = req.query.category;
     }
+    if (req.query.style) {
+      filter.style = req.query.style;
+    }
     const templates = await Template.find(filter).sort({ createdAt: -1 });
     res.json(templates);
   } catch (err) {

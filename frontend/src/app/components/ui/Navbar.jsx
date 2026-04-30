@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Heart, ShoppingCart, User, LogOut } from 'lucide-react';
+import { Heart, ShoppingCart, User, LogOut, Package } from 'lucide-react';
 import { useAuth } from '../../../context/AuthContext';
 import AuthModal from './AuthModal';
 
@@ -69,6 +69,10 @@ export default function Navbar() {
                         <p className="text-sm font-medium text-gray-900">{user.name}</p>
                         <p className="text-xs text-gray-500 truncate">{user.email}</p>
                       </div>
+                      <Link to="/orders" onClick={() => setShowMenu(false)}
+                        className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors">
+                        <Package size={16} /> My Orders
+                      </Link>
                       <button
                         onClick={() => { logout(); setShowMenu(false); }}
                         className="w-full flex items-center gap-2 px-4 py-2 text-sm text-gray-700 hover:bg-gray-50 transition-colors"

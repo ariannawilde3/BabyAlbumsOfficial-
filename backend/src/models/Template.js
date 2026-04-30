@@ -12,6 +12,10 @@ const templateSchema = new mongoose.Schema(
       required: true,
       enum: ['Family', 'Wedding', 'Travel', 'Baby', 'Graduation', 'Birthday'],
     },
+    style: {
+      type: String,
+      default: '',
+    },
     price: {
       type: Number,
       required: true,
@@ -24,6 +28,14 @@ const templateSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    theme: {
+      colorPalette: [String],
+      fontFamily: { type: String, default: 'Playfair Display' },
+      accentFont: { type: String, default: 'sans-serif' },
+      borderStyle: { type: String, default: 'none' },
+      backgroundPattern: { type: String, default: '' },
+      accentElements: [String],
+    },
     pages: [
       {
         layout: {
@@ -34,6 +46,10 @@ const templateSchema = new mongoose.Schema(
         placeholders: {
           type: Number,
           default: 1,
+        },
+        rotations: {
+          type: [Number],
+          default: [],
         },
       },
     ],

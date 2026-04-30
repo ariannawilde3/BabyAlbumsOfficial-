@@ -4,11 +4,27 @@ const AuthContext = createContext(null);
 
 const API_URL = 'http://localhost:3001/api';
 
+function getOrCreateGuestId() {
+  let id = localStorage.getItem('guestId');
+  if (!id) {
+    id = crypto.randomUUID();
+    localStorage.setItem('guestId', id);
+  }
+  return id;
+}
+
+function authHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  const guestId = localStorage.getItem('guestId');
+  if (guestId) headers['x-guest-id'] = guestId;
+  return headers;
+}
+
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [guestId] = useState(getOrCreateGuestId);
 
-  // On mount, check for existing token and restore session
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (token) {
@@ -24,16 +40,48 @@ export function AuthProvider({ children }) {
     }
   }, []);
 
-  // Called after Google sign-in — sends credential to backend
   async function loginWithGoogle(credential) {
     const res = await fetch(`${API_URL}/auth/google`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: authHeaders(),
       body: JSON.stringify({ credential }),
     });
 
+    if (!res.ok) throw new Error('Authentication failed');
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
+    return data.user;
+  }
+
+  async function loginWithEmail(email, password) {
+    const res = await fetch(`${API_URL}/auth/login`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ email, password }),
+    });
+
     if (!res.ok) {
-      throw new Error('Authentication failed');
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Login failed');
+    }
+
+    const data = await res.json();
+    localStorage.setItem('token', data.token);
+    setUser(data.user);
+    return data.user;
+  }
+
+  async function register(name, email, password) {
+    const res = await fetch(`${API_URL}/auth/register`, {
+      method: 'POST',
+      headers: authHeaders(),
+      body: JSON.stringify({ name, email, password }),
+    });
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      throw new Error(err.error || 'Registration failed');
     }
 
     const data = await res.json();
@@ -47,8 +95,19 @@ export function AuthProvider({ children }) {
     setUser(null);
   }
 
+  const isGuest = !user;
+
   return (
-    <AuthContext.Provider value={{ user, loading, loginWithGoogle, logout }}>
+    <AuthContext.Provider value={{
+      user,
+      loading,
+      guestId,
+      isGuest,
+      loginWithGoogle,
+      loginWithEmail,
+      register,
+      logout,
+    }}>
       {children}
     </AuthContext.Provider>
   );

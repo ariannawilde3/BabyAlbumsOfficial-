@@ -5,7 +5,13 @@ const cartItemSchema = new mongoose.Schema(
     user: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
-      required: true,
+      default: null,
+    },
+    guestId: {
+      type: String,
+      default: null,
+      index: true,
+      sparse: true,
     },
     project: {
       type: mongoose.Schema.Types.ObjectId,
